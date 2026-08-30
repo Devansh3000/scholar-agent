@@ -1,7 +1,5 @@
 # 📚 Scholar Agent — An Autonomous Literature Review & Research Multi-Agent System
 
-![Scholar Agent](media/Mukti%20Scholar%20Agent.png)
-
 *Capstone Project for Google Agents Intensive*
 
 *Multi-Agent Autonomous AI System for Literature Review & Research*
