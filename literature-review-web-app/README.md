@@ -1,6 +1,6 @@
-# Mukti Scholar Agent
+# Scholar Agent
 
-Mukti Scholar Agent is a full-stack academic research tool that takes a research topic and automatically produces a structured literature review. You submit a topic through the React web interface; the FastAPI backend kicks off a 10-agent Google ADK pipeline that searches multiple academic databases, retrieves and summarizes papers, clusters them into themes, identifies research gaps, writes the review sections, formats citations, and delivers a finished document — all without manual intervention.
+Scholar Agent is a full-stack academic research tool that takes a research topic and automatically produces a structured literature review. You submit a topic through the React web interface; the FastAPI backend kicks off a 10-agent Google ADK pipeline that searches multiple academic databases, retrieves and summarizes papers, clusters them into themes, identifies research gaps, writes the review sections, formats citations, and delivers a finished document — all without manual intervention.
 
 ## Architecture
 

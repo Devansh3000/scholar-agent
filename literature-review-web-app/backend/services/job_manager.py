@@ -156,7 +156,7 @@ class JobManager:
 
         estimated_remaining: float | None = None
         if status_str in ("running", "pending"):
-            estimated_remaining = max(0.0, 120.0 - elapsed)
+            estimated_remaining = max(0.0, 600.0 - elapsed)
 
         return JobStatusResponse(
             job_id=job.job_id,
@@ -195,6 +195,23 @@ class JobManager:
             review=review_dto,
             completed_at=job.updated_at,
         )
+
+    async def get_pdf_path(self, job_id: str) -> str | None:
+        """Return the PDF file path for a completed job, or ``None`` if unavailable.
+
+        Args:
+            job_id: UUID string identifying the job.
+
+        Returns:
+            The ``pdf_path`` string from the raw domain object, or ``None``
+            if the job doesn't exist, isn't complete, or has no PDF.
+        """
+        async with self._lock:
+            job = self._jobs.get(job_id)
+
+        if job is None or job.status != Stage.COMPLETED or job.result is None:
+            return None
+        return job.result.pdf_path
 
     # ------------------------------------------------------------------
     # Status mutations

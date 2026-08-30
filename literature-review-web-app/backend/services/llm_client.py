@@ -95,8 +95,8 @@ async def llm_complete(
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://github.com/mukti-scholar",
-        "X-Title": "Mukti Scholar Agent",
+        "HTTP-Referer": "https://github.com/scholar-agent",
+        "X-Title": "Scholar Agent",
     }
 
     last_error: str = "unknown error"

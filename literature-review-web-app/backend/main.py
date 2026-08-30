@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 def create_app() -> FastAPI:
     app = FastAPI(
-        title="Mukti Scholar Agent",
+        title="Scholar Agent",
         description="Autonomous Literature Review & Research Multi-Agent System",
         version="1.0.0",
         docs_url="/docs",
@@ -36,7 +36,7 @@ def create_app() -> FastAPI:
             max_workers=10, thread_name_prefix="blocking-io"
         )
         loop.set_default_executor(executor)
-        logger.info("Mukti Scholar API starting. version=%s env=%s",
+        logger.info("Scholar Agent API starting. version=%s env=%s",
             settings.APP_VERSION, settings.ENVIRONMENT)
 
     return app

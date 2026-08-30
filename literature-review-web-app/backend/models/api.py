@@ -82,7 +82,7 @@ class CreateReviewResponse(BaseModel):
 
     job_id: str = Field(description="UUID that uniquely identifies this review job.")
     estimated_seconds: int = Field(
-        default=120,
+        default=600,
         description="Server-side estimate of how long the pipeline will take.",
     )
 

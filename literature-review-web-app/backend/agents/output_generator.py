@@ -15,6 +15,8 @@ from __future__ import annotations
 import asyncio
 import dataclasses
 import logging
+import os
+import tempfile
 from datetime import datetime
 from typing import TYPE_CHECKING, Literal
 from uuid import uuid4
@@ -45,7 +47,7 @@ async def run_output_generator(
     review_sections: "ReviewSections",
     bibliography: str,
     citation_style: Literal["APA", "Harvard", "IEEE"],
-    output_dir: str = "/tmp/reviews",
+    output_dir: str = "",
 ) -> LiteratureReview:
     """Assemble a :class:`~models.paper.LiteratureReview` and generate a PDF.
 
@@ -67,15 +69,13 @@ async def run_output_generator(
     citation_style:
         One of ``"APA"``, ``"Harvard"``, or ``"IEEE"``.
     output_dir:
-        Directory where the generated PDF will be stored.  Defaults to
-        ``/tmp/reviews``.
-
-    Returns
-    -------
-    LiteratureReview
-        The assembled review, with ``pdf_path`` set if PDF generation
-        succeeded, or ``None`` if it failed.
+        Directory where the generated PDF will be stored.  Defaults to a
+        ``reviews`` subdirectory inside the system temp folder.
     """
+    # Use platform-appropriate temp directory when no output_dir specified
+    if not output_dir:
+        output_dir = os.path.join(tempfile.gettempdir(), "reviews")
+
     # ------------------------------------------------------------------
     # 1. Build quality metrics
     # ------------------------------------------------------------------
@@ -114,8 +114,9 @@ async def run_output_generator(
     # ------------------------------------------------------------------
     output_path = f"{output_dir}/{review.review_id}.pdf"
     try:
-        pdf_path: str = await asyncio.get_event_loop().run_in_executor(
-            None, generate_pdf, review, output_path
+        pdf_path: str = await asyncio.wait_for(
+            asyncio.to_thread(generate_pdf, review, output_path),
+            timeout=30.0,
         )
         review = dataclasses.replace(review, pdf_path=pdf_path)
     except Exception as exc:  # noqa: BLE001

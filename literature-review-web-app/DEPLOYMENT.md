@@ -56,7 +56,7 @@ Serve `frontend/dist/` with any static file server. Example nginx config:
 server {
     listen 80;
     server_name your-frontend-domain.com;
-    root /var/www/mukti-scholar/dist;
+    root /var/www/scholar-agent/dist;
     index index.html;
 
     # SPA fallback
@@ -76,7 +76,7 @@ Cloud Run supports deploying directly from source using a `Procfile` or `Dockerf
 
 ```bash
 # From the backend/ directory
-gcloud run deploy mukti-scholar-backend \
+gcloud run deploy scholar-agent-backend \
   --source . \
   --region us-central1 \
   --allow-unauthenticated \
@@ -89,7 +89,7 @@ Set remaining secrets via Secret Manager:
 
 ```bash
 gcloud secrets create ieee-api-key --data-file=- <<< "your-ieee-key"
-gcloud run services update mukti-scholar-backend \
+gcloud run services update scholar-agent-backend \
   --update-secrets IEEE_API_KEY=ieee-api-key:latest
 ```
 
@@ -98,7 +98,7 @@ gcloud run services update mukti-scholar-backend \
 Build locally with the Cloud Run URL as the API base:
 
 ```bash
-VITE_API_URL=https://mukti-scholar-backend-xxx.run.app npm run build
+VITE_API_URL=https://scholar-agent-backend-xxx.run.app npm run build
 ```
 
 Deploy to **Firebase Hosting**:

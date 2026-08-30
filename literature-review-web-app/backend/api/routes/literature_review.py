@@ -47,7 +47,7 @@ async def create_review(
 
     job_id = await job_manager.create_job(request.topic, request.config)
     background_tasks.add_task(pipeline_runner.run, job_id=job_id, topic=request.topic, config=request.config)
-    return CreateReviewResponse(job_id=job_id, estimated_seconds=120)
+    return CreateReviewResponse(job_id=job_id, estimated_seconds=600)
 
 @router.get("/literature-review/{job_id}/status", response_model=JobStatusResponse)
 async def get_status(job_id: str, job_manager: JobManager = Depends(get_job_manager)):
@@ -68,13 +68,24 @@ async def get_result(job_id: str, job_manager: JobManager = Depends(get_job_mana
 
 @router.get("/literature-review/{job_id}/download")
 async def download_pdf(job_id: str, job_manager: JobManager = Depends(get_job_manager)):
+    # Check the job exists and is complete first
     result = await job_manager.get_result(job_id)
     if result is None:
-        raise HTTPException(status_code=404, detail="Result not found")
-    if result.review.pdf_path is None:
+        status = await job_manager.get_status(job_id)
+        if status is None:
+            raise HTTPException(status_code=404, detail="Job not found")
+        raise HTTPException(status_code=404, detail="Result not ready yet")
+
+    # Get pdf_path from the raw domain object (not the DTO, which omits it)
+    pdf_path = await job_manager.get_pdf_path(job_id)
+    if pdf_path is None:
         raise HTTPException(status_code=503, detail="PDF not available for this review")
-    return FileResponse(result.review.pdf_path, media_type="application/pdf",
-        filename=f"literature-review-{job_id[:8]}.pdf")
+
+    return FileResponse(
+        pdf_path,
+        media_type="application/pdf",
+        filename=f"literature-review-{job_id[:8]}.pdf",
+    )
 
 @router.post("/literature-review/{job_id}/cancel", status_code=200)
 async def cancel_review(job_id: str, job_manager: JobManager = Depends(get_job_manager)):
